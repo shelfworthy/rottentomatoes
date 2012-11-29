@@ -1,5 +1,5 @@
 #!/usr/bin/env python
 
-from rottentomatoes import rt
+from rottentomatoes import RottenTomatoesClient
 
-__all__ = [rt]
+__all__ = [RottenTomatoesClient]

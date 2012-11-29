@@ -6,15 +6,13 @@ import requests
 #  this is the current max the api will return per page
 max_results_per_page = 50
 
-def find_number_of_pages(self, total_count, max_results):
-    return int(math.ceil(total_count/float(max_results_per_page)))
-
 def parse_list(results, api_key):
     if 'movies' in results:
         # if we have movies, return them
 
         if 'total' in results:
-            pages = find_number_of_pages(results['total'])
+            #  find how many pages of results we'll have based on the total count and the amount per page
+            pages = int(math.ceil(results['total']/float(max_results_per_page)))
         else:
             pages = 1
 
@@ -41,8 +39,6 @@ class List(object):
     def get(self):
         results = RottenTomatoesClient(self.api_key)._request(self.url)
 
-        print results
-
         return parse_list(results, self.api_key)
 
 class RottenTomatoesClient(object):
@@ -50,9 +46,6 @@ class RottenTomatoesClient(object):
         self.api_key = api_key
 
         self.server = 'api.rottentomatoes.com/api/public/v1.0/'
-
-        self.lists_url = self.server + '/lists'
-        self.movie_url = self.server + '/movies'
 
     def _request(self, url, params=None):
         if not re.match('http', url):
@@ -122,27 +115,6 @@ class RottenTomatoesClient(object):
         base_list_url = 'lists'
 
         if directory:
-            base_list_url = base_list_url + directory
+            base_list_url = base_list_url + '/' + directory
 
         return parse_list(self._request(base_list_url), self.api_key)
-
-    def info(self, id_num, specific_info=None):
-        """
-        Return info for a movie given its `id`.
-        Arguments for `specific_info` include `cast` and `reviews`.
-
-        >>> fight_club = u'13153'
-        >>> RottenTomatoesClient().info(fight_club)
-        >>> # For cast info
-        ... RottenTomatoesClient().info(fight_club, 'cast')
-        """
-        if isinstance(id_num, int):
-            id_num = str(id_num)
-        movie_url = [self.movie_url]
-        movie_url.append('/%s' % id_num)
-        if specific_info:
-            movie_url.append('/%s' % specific_info)
-        end_of_url = ['.json?', urlencode({'apikey': self.api_key})]
-        movie_url.extend(end_of_url)
-        data = json.loads(urlopen(''.join(movie_url)).read())
-        return data

@@ -1,7 +1,6 @@
 rottentomatoes.py
 =================
 
-
 Changelog
 ---------
 
@@ -48,134 +47,61 @@ repository:
 Usage
 -----
 
-Without saving your API key in the `rottentomatoes_api_key.py` file:
+* `search`  -- Rotten Tomatoes movie search. Returns:
 
-    >>> from rottentomatoes import rt
-    >>> RottenTomatoesClient('my_api_key').search('some movie here')
+- `pages`: how many pages of results there are. Get the next page by passing in a `page=2` argument.
+- `movies`: a list of dictionarys describing each result movie.
 
-With your API key saved:
+``` python
 
-    >>> from rottentomatoes import rt
-    >>> RottenTomatoesClient().search('some movie here')
+>>> from rottentomatoes import RottenTomatoesClient
+>>> rt = RottenTomatoesClient('my_api_key')
+>>> rt.search('some movie here')
 
-**NOTE**: Documentation from this point forward will assume you have saved your
-Rotten Tomatoes Developer API Key to the `rottentomatoes_api_key.py` file (which
-you should consider doing in order to cut down on boilerplate code).
+{'pages': 2,
+ 'movies': [<list of movies>]
+}
 
+```
 
-### Methods
+* `lists` -- Rotten Tomatoes Lists.
 
-* `search`  -- Rotten Tomatoes movie search. Returns a list of dictionaries. Possible kwargs include: `page` and `page_limit`.
-<pre><code>
-    >>> rt = RottenTomatoesClient()
-    >>> rt.search('the lion king')
-    [{'movie': 'here'}, {'movie': 'here'}, ...]
+Calling this funcion witout any args will return the top level list of lists:
 
-    >>> rt.search('fight club', page_limit=2)
-    [{'movie': 1}, {'movie': 2}]
+``` python
 
-    >>> rt.search('disney', page=2)
-    [{'movie': 'from second page'}, {'movie': 'from second page'}, ...]
-</code></pre>
+rt.lists()
 
-* `lists` -- Displays the lists available in the Rotten Tomatoes API.
-<pre><code>
-    >>> rt = RottenTomatoesClient()
-    >>> rt.lists()
-    {'links': {'movies': 'http://link-to-movies',
-               'dvds': 'http://link-to-dvds'}}
+{u'dvds': <rottentomatoes.rottentomatoes.List at 0x1032de090>,
+ u'movies': <rottentomatoes.rottentomatoes.List at 0x1032de890>}
 
-    >>> rt.lists('dvds')
-    {'links': {'new_releases': 'http://link-to-new-releases'}}
+```
 
-    >>> rt.lists(directory='dvds')
-    {'links': {'new_releases': 'http://link-to-new-releases'}}
+lists current have a single `.get()` method that is used to get their contents (either more lists of movies):
 
-    >>> rt.lists('dvds', 'new_releases')
-    {'your data': 'is right here'}
+``` python
 
-    >>> rt.lists(directory='dvds', sub='new_releases')
-    {'your data': 'is right here'}
+rt.lists()['dvds'].get()
 
-    >>> rt.lists('movies')
-    {'links': {'box_office': 'http://link-to-box-office-movies',
-               'in_theaters': 'http://link-to-movies-in-theaters',
-               'opening': 'http://link-to-opening-movies',
-               'upcoming': 'http://link-to-upcoming-movies'}
+{u'current_releases': <rottentomatoes.rottentomatoes.List at 0x1032de610>,
+ u'new_releases': <rottentomatoes.rottentomatoes.List at 0x1032de0d0>,
+ u'top_rentals': <rottentomatoes.rottentomatoes.List at 0x1032de8d0>,
+ u'upcoming': <rottentomatoes.rottentomatoes.List at 0x1032de190>}
 
-    >>> rt.lists('movies', 'box_office')
-    {'your data': 'is right here'}
+ ```
+it is also possible to send the `directory` arg to lists to get a list directly:
 
-    >>> rt.lists('movies', 'box_office', page_limit=5)
-    {'only five': 'box office movies'}
+``` python
 
-    >>> rt.lists('movies', 'opening')
-    {'your data': 'is right here'}
-</code></pre>
+rt.lists('dvds/current_releases')
 
-* `info` -- Return info for a movie given its `id`. Arguments for `specific_info` include `cast` and `reviews`.
-<pre><code>
-    >>> rt = RottenTomatoesClient()
-    >>> fight_club = '13153'
-    >>> rt.info(fight_club)
-    {'your data': 'is right here'}
+{'pages': 1,
+ 'movies': [<list of movies>]
+}
 
-    >>> rt.info(fight_club, 'cast')
-    {'cast info': 'is right here'}
-
-    >>> rt.info(fight_club, 'reviews')
-    {'reviews': 'are right here'}
-</code></pre>
-
-* `new`  -- Short method to return just opened theatrical movies or newly released dvds. Returns a list of dictionaries.
-<pre><code>
-    >>> rt = RottenTomatoesClient()
-    >>> rt.new('movies')
-    [{'movie': 'here'}, {'movie': 'here'}, ...]
-
-    >>> rt.new('dvds')
-    [{'dvd': 'here'}, {'dvd': 'here'}, ...]
-</code></pre>
-
-* `movies` -- Short method for returning specific movie lists. Possible `sub` arguments include: `box_office`, `in_theaters`, `opening`, and `upcoming`.
-<pre><code>
-    >>> rt = RottenTomatoesClient()
-    >>> rt.movies('in_theaters', page_limit=5)
-    {'top five': 'movies in theaters'}
-
-    >>> rt.movies('opening', page_limit=5)
-    {'top five': 'movies opening'}
-
-    >>> rt.movies('upcoming', page=2)
-    {'page 2': 'of upcoming movies'}
-</code></pre>
-
-* `dvds` -- Short method for returning specific dvd lists. Currently, only one `sub` argument is possible: `new_releases`.
-<pre><code>
-    >>> RottenTomatoesClient().dvds(page_limit=5)
-    {'only 5': 'newly released dvds'}
-</code></pre>
-
-* `feeling_lucky` -- Similar to Google's **I'm Feeling Lucky** button. Returns first instance of search term.
-<pre><code>
-    >>> RottenTomatoesClient().feeling_lucky('memento')
-    {'first result': 'for memento'}
-</code></pre>
-
-
-Tests
------
-
-In order to run the tests for `rottentomatoes.py`, make sure you have the
-[mock library](http://pypi.python.org/pypi/mock) installed.
-
-Also, all code complies with the [PEP 8 Style Guide](http://www.python.org/dev/peps/pep-0008/).
-
+```
 
 License
 -------
 
-**Author**: Zach Williams
-
-All code released under [the Unlicense](http://unlicense.org/) (a.k.a. Public
-Domain).
+**Author**: Zach Williams, Chris Drackett
