@@ -1,28 +1,20 @@
 import requests
 
-from rottentomatoes_api_key import API_KEY
-
-
 class rt(object):
     """
     An easy-to-use Python wrapper for the Rotten Tomatoes API.
 
     >>> rt('my-api-key').search('the lion king')
 
-    Or, if your API key is stored in the `rottentomatoes_api_key.py` file,
     the rt class can be initialized like so:
 
     >>> rt().search('the lion king')
     """
 
-    def __init__(self, api_key, version=1.0):
+    def __init__(self, api_key):
         self.api_key = api_key
 
-        if isinstance(version, float):
-            version = str(version)  # Eliminate any weird float behavior.
-        self.version = version
-
-        BASE_URL = 'http://api.rottentomatoes.com/api/public/v%s/' % version
+        BASE_URL = 'http://api.rottentomatoes.com/api/public/v1.0/'
         self.BASE_URL = BASE_URL
         self.lists_url = BASE_URL + 'lists'
         self.movie_url = BASE_URL + 'movies'
@@ -38,6 +30,7 @@ class rt(object):
 
         >>> rt().search('disney', 'total')
         """
+
         search_url = [self.movie_url, '?']
         kwargs.update({'apikey': self.api_key, 'q': query})
         search_url.append(urlencode(kwargs))
