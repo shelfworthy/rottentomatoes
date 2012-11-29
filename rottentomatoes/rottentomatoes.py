@@ -1,41 +1,64 @@
+import re
+import math
+
 import requests
 
 class rt(object):
-    """
-    An easy-to-use Python wrapper for the Rotten Tomatoes API.
-
-    >>> rt('my-api-key').search('the lion king')
-
-    the rt class can be initialized like so:
-
-    >>> rt().search('the lion king')
-    """
-
     def __init__(self, api_key):
         self.api_key = api_key
 
-        BASE_URL = 'http://api.rottentomatoes.com/api/public/v1.0/'
-        self.BASE_URL = BASE_URL
-        self.lists_url = BASE_URL + 'lists'
-        self.movie_url = BASE_URL + 'movies'
+        self.server = 'http://api.rottentomatoes.com/api/public/v1.0/'
 
-    def search(self, query, datatype='movies', **kwargs):
+        self.lists_url = self.server + '/lists'
+        self.movie_url = self.server + '/movies'
+
+    def _request(self, url, params=None):
+        if not re.match('http', url):
+            url = "http://%s%s.json" % (self.server, url)
+
+        request_params = {'apikey': self.api_key}
+
+        if params:
+            request_params = dict(request_params.items() + params.items())
+
+        response = requests.get(url, params=request_params, allow_redirects=True)
+        response.raise_for_status()  # raise an error if we get one
+
+        return response.json
+
+    def search(self, query, page=1):
         """
-        Rotten Tomatoes movie search. Returns a list of dictionaries.
-        Possible kwargs include: `page` and `page_limit`.
+        Rotten Tomatoes movie search. Returns a dict with two keys, pages and a dict of movies.
 
-        >>> rt().search('the lion king')
+        >>> api = rt('my-api-key')
+        >>> api.search('brave')
 
-        Or, for the total count of search results:
 
-        >>> rt().search('disney', 'total')
+        {
+            'pages': 2,
+            'movies': {<movies here>}
+        }
+
         """
 
-        search_url = [self.movie_url, '?']
-        kwargs.update({'apikey': self.api_key, 'q': query})
-        search_url.append(urlencode(kwargs))
-        data = json.loads(urlopen(''.join(search_url)).read())
-        return data[datatype]
+        max_results_per_page = 50  # as set by the API
+
+        raw = self._request('movies', params={
+            'query': query,
+            'page_limit': max_results_per_page,
+            'page': page
+        })
+
+        total = raw['total']
+
+        if total > max_results_per_page:
+            count = total/float(max_results_per_page)
+            number_of_pages = math.ceil(count)
+
+        return {
+            'pages': number_of_pages,
+            'movies': raw['movies']
+        }
 
     def lists(self, directory=None, sub=None, **kwargs):
         """
