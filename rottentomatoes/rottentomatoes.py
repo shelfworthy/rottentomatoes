@@ -3,9 +3,26 @@ import math
 
 import requests
 
+#  this is the current max the api will return per page
+max_results_per_page = 50
+
+def find_number_of_pages(self, total_count, max_results):
+    return int(math.ceil(total_count/float(max_results_per_page)))
+
 def parse_list(results, api_key):
     if 'movies' in results:
         # if we have movies, return them
+
+        if 'total' in results:
+            pages = find_number_of_pages(results['total'])
+        else:
+            pages = 1
+
+        return {
+            'pages': pages,
+            'movies': results['movies']
+        }
+
         return results['movies']
     else:
         # otherwise we probably have more lists
@@ -24,6 +41,8 @@ class List(object):
     def get(self):
         results = rt(self.api_key)._request(self.url)
 
+        print results
+
         return parse_list(results, self.api_key)
 
 class rt(object):
@@ -31,7 +50,6 @@ class rt(object):
         self.api_key = api_key
 
         self.server = 'api.rottentomatoes.com/api/public/v1.0/'
-        self.max_results_per_page = 50  # as set by the API
 
         self.lists_url = self.server + '/lists'
         self.movie_url = self.server + '/movies'
@@ -40,7 +58,11 @@ class rt(object):
         if not re.match('http', url):
             url = "http://%s%s.json" % (self.server, url)
 
-        request_params = {'apikey': self.api_key}
+        request_params = {
+            'apikey': self.api_key,
+            'limit': max_results_per_page,
+            'page_limit': max_results_per_page,
+        }
 
         if params:
             request_params = dict(request_params.items() + params.items())
@@ -49,9 +71,6 @@ class rt(object):
         response.raise_for_status()  # raise an error if we get one
 
         return response.json
-
-    def _find_number_of_pages(self, total_count):
-        return int(math.ceil(total_count/float(self.max_results_per_page)))
 
     def search(self, query, page=1):
         """
@@ -70,14 +89,10 @@ class rt(object):
 
         raw = self._request('movies', params={
             'q': query,
-            'page_limit': self.max_results_per_page,
             'page': page
         })
 
-        return {
-            'pages': self._find_number_of_pages(raw['total']),
-            'movies': raw['movies']
-        }
+        return parse_list(raw, self.api_key)
 
     def lists(self, directory=None, page=1):
         """
@@ -98,7 +113,10 @@ class rt(object):
 
         >>> dvd_lists['current_releases'].get()
 
-        [<list of movies>]
+        {
+            'pages': 2,
+            'movies': {<movies here>}
+        }
         """
 
         base_list_url = 'lists'
