@@ -1,24 +1,4 @@
-#!/usr/bin/env python
-
-"""
-Rotten Tomatoes API:  http://developer.rottentomatoes.com/
-
-Main file for interacting with the Rotten Tomatoes API.
-"""
-
-from urllib import urlencode
-
-try:
-    import json
-except ImportError:  # pragma: no cover
-    # For older versions of Python.
-    import simplejson as json
-
-try:
-    from urllib2 import urlopen
-except ImportError:  # pragma: no cover
-    # For Python 3.
-    from urllib.request import urlopen
+import requests
 
 from rottentomatoes_api_key import API_KEY
 
@@ -35,14 +15,13 @@ class rt(object):
     >>> rt().search('the lion king')
     """
 
-    def __init__(self, api_key='', version=1.0):
-        if not api_key:
-            self.api_key = API_KEY
-        else:
-            self.api_key = api_key
+    def __init__(self, api_key, version=1.0):
+        self.api_key = api_key
+
         if isinstance(version, float):
             version = str(version)  # Eliminate any weird float behavior.
         self.version = version
+
         BASE_URL = 'http://api.rottentomatoes.com/api/public/v%s/' % version
         self.BASE_URL = BASE_URL
         self.lists_url = BASE_URL + 'lists'
