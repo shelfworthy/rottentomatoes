@@ -51,12 +51,12 @@ Usage
 Without saving your API key in the `rottentomatoes_api_key.py` file:
 
     >>> from rottentomatoes import rt
-    >>> rt('my_api_key').search('some movie here')
+    >>> RottenTomatoesClient('my_api_key').search('some movie here')
 
 With your API key saved:
 
     >>> from rottentomatoes import rt
-    >>> rt().search('some movie here')
+    >>> RottenTomatoesClient().search('some movie here')
 
 **NOTE**: Documentation from this point forward will assume you have saved your
 Rotten Tomatoes Developer API Key to the `rottentomatoes_api_key.py` file (which
@@ -67,7 +67,7 @@ you should consider doing in order to cut down on boilerplate code).
 
 * `search`  -- Rotten Tomatoes movie search. Returns a list of dictionaries. Possible kwargs include: `page` and `page_limit`.
 <pre><code>
-    >>> rt = rt()
+    >>> rt = RottenTomatoesClient()
     >>> rt.search('the lion king')
     [{'movie': 'here'}, {'movie': 'here'}, ...]
 
@@ -80,7 +80,7 @@ you should consider doing in order to cut down on boilerplate code).
 
 * `lists` -- Displays the lists available in the Rotten Tomatoes API.
 <pre><code>
-    >>> rt = rt()
+    >>> rt = RottenTomatoesClient()
     >>> rt.lists()
     {'links': {'movies': 'http://link-to-movies',
                'dvds': 'http://link-to-dvds'}}
@@ -115,7 +115,7 @@ you should consider doing in order to cut down on boilerplate code).
 
 * `info` -- Return info for a movie given its `id`. Arguments for `specific_info` include `cast` and `reviews`.
 <pre><code>
-    >>> rt = rt()
+    >>> rt = RottenTomatoesClient()
     >>> fight_club = '13153'
     >>> rt.info(fight_club)
     {'your data': 'is right here'}
@@ -129,7 +129,7 @@ you should consider doing in order to cut down on boilerplate code).
 
 * `new`  -- Short method to return just opened theatrical movies or newly released dvds. Returns a list of dictionaries.
 <pre><code>
-    >>> rt = rt()
+    >>> rt = RottenTomatoesClient()
     >>> rt.new('movies')
     [{'movie': 'here'}, {'movie': 'here'}, ...]
 
@@ -139,7 +139,7 @@ you should consider doing in order to cut down on boilerplate code).
 
 * `movies` -- Short method for returning specific movie lists. Possible `sub` arguments include: `box_office`, `in_theaters`, `opening`, and `upcoming`.
 <pre><code>
-    >>> rt = rt()
+    >>> rt = RottenTomatoesClient()
     >>> rt.movies('in_theaters', page_limit=5)
     {'top five': 'movies in theaters'}
 
@@ -152,13 +152,13 @@ you should consider doing in order to cut down on boilerplate code).
 
 * `dvds` -- Short method for returning specific dvd lists. Currently, only one `sub` argument is possible: `new_releases`.
 <pre><code>
-    >>> rt().dvds(page_limit=5)
+    >>> RottenTomatoesClient().dvds(page_limit=5)
     {'only 5': 'newly released dvds'}
 </code></pre>
 
 * `feeling_lucky` -- Similar to Google's **I'm Feeling Lucky** button. Returns first instance of search term.
 <pre><code>
-    >>> rt().feeling_lucky('memento')
+    >>> RottenTomatoesClient().feeling_lucky('memento')
     {'first result': 'for memento'}
 </code></pre>
 

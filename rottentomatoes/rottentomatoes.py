@@ -39,13 +39,13 @@ class List(object):
         self.api_key = api_key
 
     def get(self):
-        results = rt(self.api_key)._request(self.url)
+        results = RottenTomatoesClient(self.api_key)._request(self.url)
 
         print results
 
         return parse_list(results, self.api_key)
 
-class rt(object):
+class RottenTomatoesClient(object):
     def __init__(self, api_key):
         self.api_key = api_key
 
@@ -76,7 +76,7 @@ class rt(object):
         """
         Rotten Tomatoes movie search. Returns a dict with two keys, pages and a dict of movies.
 
-        >>> api = rt('my-api-key')
+        >>> api = RottenTomatoesClient('my-api-key')
         >>> api.search('brave')
 
 
@@ -98,7 +98,7 @@ class rt(object):
         """
         If sent without a directory returns the lists available in the Rotten Tomatoes API.
 
-        >>> api = rt('my-api-key')
+        >>> api = RottenTomatoesClient('my-api-key')
         >>> lists = api.lists()
 
         {u'dvds': <rottentomatoes.rottentomatoes.List at 0x1032d0690>,
@@ -132,9 +132,9 @@ class rt(object):
         Arguments for `specific_info` include `cast` and `reviews`.
 
         >>> fight_club = u'13153'
-        >>> rt().info(fight_club)
+        >>> RottenTomatoesClient().info(fight_club)
         >>> # For cast info
-        ... rt().info(fight_club, 'cast')
+        ... RottenTomatoesClient().info(fight_club, 'cast')
         """
         if isinstance(id_num, int):
             id_num = str(id_num)
