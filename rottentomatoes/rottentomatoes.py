@@ -7,7 +7,7 @@ class rt(object):
     def __init__(self, api_key):
         self.api_key = api_key
 
-        self.server = 'http://api.rottentomatoes.com/api/public/v1.0/'
+        self.server = 'api.rottentomatoes.com/api/public/v1.0/'
 
         self.lists_url = self.server + '/lists'
         self.movie_url = self.server + '/movies'
@@ -15,6 +15,8 @@ class rt(object):
     def _request(self, url, params=None):
         if not re.match('http', url):
             url = "http://%s%s.json" % (self.server, url)
+
+        print url
 
         request_params = {'apikey': self.api_key}
 
@@ -44,7 +46,7 @@ class rt(object):
         max_results_per_page = 50  # as set by the API
 
         raw = self._request('movies', params={
-            'query': query,
+            'q': query,
             'page_limit': max_results_per_page,
             'page': page
         })
@@ -56,7 +58,7 @@ class rt(object):
             number_of_pages = math.ceil(count)
 
         return {
-            'pages': number_of_pages,
+            'pages': int(number_of_pages),
             'movies': raw['movies']
         }
 
