@@ -11,7 +11,7 @@ except ImportError:  # pragma: no cover
     from cgi import parse_qs
 from mock import Mock
 from rottentomatoes import rottentomatoes
-from rottentomatoes import RT
+from rottentomatoes import rt
 
 
 def set_up():
@@ -35,22 +35,22 @@ def call_args(kind='query'):
         return parsed_call.path
 
 
-class RTClassInitTest(unittest.TestCase):
+class rtClassInitTest(unittest.TestCase):
 
     def setUp(self):
         set_up()
 
     def test_uninitialized_api_key(self):
-        self.assertEqual(RT().api_key, 'my_api_key')
+        self.assertEqual(rt().api_key, 'my_api_key')
 
     def test_initialized_api_key(self):
-        self.assertEqual(RT('called_api_key').api_key, 'called_api_key')
+        self.assertEqual(rt('called_api_key').api_key, 'called_api_key')
 
     def test_version_argument_with_float(self):
-        self.assertEqual(RT(version=2.5).version, '2.5')
+        self.assertEqual(rt(version=2.5).version, '2.5')
 
     def test_version_argument_with_string(self):
-        self.assertEqual(RT(version='2.5').version, '2.5')
+        self.assertEqual(rt(version='2.5').version, '2.5')
 
 
 class SearchMethodTest(unittest.TestCase):
@@ -59,57 +59,57 @@ class SearchMethodTest(unittest.TestCase):
         set_up()
 
     def test_nonempty_search_url_path(self):
-        RT().search('some movie')
+        rt().search('some movie')
         path = call_args('path')
         self.assertEqual(path, '/api/public/v1.0/movies')
 
     def test_empty_search_url_keys(self):
-        RT().search('')
+        rt().search('')
         movie = call_args()
         self.assertEqual(movie.keys(), ['apikey'])
 
     def test_nonempty_search_url_keys(self):
-        RT().search('some movie')
+        rt().search('some movie')
         movie = call_args()
         self.assertEqual(movie.keys(), ['q', 'apikey'])
 
     def test_search_url_keys_with_page_arg(self):
-        RT().search('some movie', page=2)
+        rt().search('some movie', page=2)
         movie = call_args()
         self.assertEqual(movie.keys(), ['q', 'apikey', 'page'])
 
     def test_search_url_keys_with_page_limit_arg(self):
-        RT().search('some movie', page_limit=5)
+        rt().search('some movie', page_limit=5)
         movie = call_args()
         self.assertEqual(movie.keys(), ['q', 'apikey', 'page_limit'])
 
     def test_search_url_keys_with_multiple_kwargs(self):
-        RT().search('some movie', page=2, page_limit=5)
+        rt().search('some movie', page=2, page_limit=5)
         movie = call_args()
         self.assertEqual(movie.keys(), ['q', 'apikey', 'page', 'page_limit'])
 
     def test_search_url_keys_for_lion_king(self):
-        RT().search('the lion king')
+        rt().search('the lion king')
         movie = call_args()
         assert 'my_api_key' in movie['apikey']
         assert 'the lion king' in movie['q']
 
     def test_search_url_keys_for_ronin(self):
-        RT().search('ronin')
+        rt().search('ronin')
         movie = call_args()
         assert 'my_api_key' in movie['apikey']
         assert 'ronin' in movie['q']
 
     def test_search_results_for_standard_datatype(self):
-        results = RT().search('some movie')
+        results = rt().search('some movie')
         self.assertEqual(results, ['first_result', 'second_result'])
 
     def test_search_results_for_movies_datatype(self):
-        results = RT().search('some movie', 'movies')
+        results = rt().search('some movie', 'movies')
         self.assertEqual(results, ['first_result', 'second_result'])
 
     def test_search_results_for_total_datatype(self):
-        results = RT().search('some movie', 'total')
+        results = rt().search('some movie', 'total')
         self.assertEqual(results, 2)
 
 
@@ -119,32 +119,32 @@ class ListsMethodTest(unittest.TestCase):
         set_up()
 
     def test_empty_lists_url_path(self):
-        RT().lists()
+        rt().lists()
         path = call_args('path')
         self.assertEqual(path, '/api/public/v1.0/lists.json')
 
     def test_lists_url_path_for_dvds(self):
-        RT().lists('dvds')
+        rt().lists('dvds')
         path = call_args('path')
         self.assertEqual(path, '/api/public/v1.0/lists/dvds.json')
 
     def test_lists_url_path_for_dvds_sub_new_releases(self):
-        RT().lists('dvds', 'new_releases')
+        rt().lists('dvds', 'new_releases')
         path = call_args('path')
         self.assertEqual(path, '/api/public/v1.0/lists/dvds/new_releases.json')
 
     def test_lists_url_path_for_movies(self):
-        RT().lists('movies')
+        rt().lists('movies')
         path = call_args('path')
         self.assertEqual(path, '/api/public/v1.0/lists/movies.json')
 
     def test_lists_url_path_for_movies_sub_opening(self):
-        RT().lists('movies', 'opening')
+        rt().lists('movies', 'opening')
         path = call_args('path')
         self.assertEqual(path, '/api/public/v1.0/lists/movies/opening.json')
 
     def test_lists_url_keys_for_extra_kwargs(self):
-        RT().lists('movies', 'in_theaters', page_limit=5)
+        rt().lists('movies', 'in_theaters', page_limit=5)
         parsed_query = call_args()
         assert 'my_api_key' in parsed_query['apikey']
         assert '5' in parsed_query['page_limit']
@@ -156,29 +156,29 @@ class InfoMethodTest(unittest.TestCase):
         set_up()
 
     def test_empty_info_method_call_fails(self):
-        self.assertRaises(TypeError, RT().info)
+        self.assertRaises(TypeError, rt().info)
 
     def test_id_num_as_string(self):
         fight_club = '13153'
-        RT().info(fight_club)
+        rt().info(fight_club)
         path = call_args('path')
         self.assertEqual(path, '/api/public/v1.0/movies/13153.json')
 
     def test_id_num_as_int(self):
         fight_club = 13153
-        RT().info(fight_club)
+        rt().info(fight_club)
         path = call_args('path')
         self.assertEqual(path, '/api/public/v1.0/movies/13153.json')
 
     def test_specific_info_for_cast(self):
         fight_club = '13153'
-        RT().info(fight_club, 'cast')
+        rt().info(fight_club, 'cast')
         path = call_args('path')
         self.assertEqual(path, '/api/public/v1.0/movies/13153/cast.json')
 
     def test_specific_info_for_reviews(self):
         fight_club = '13153'
-        RT().info(fight_club, 'reviews')
+        rt().info(fight_club, 'reviews')
         path = call_args('path')
         self.assertEqual(path, '/api/public/v1.0/movies/13153/reviews.json')
 
@@ -189,22 +189,22 @@ class NewMethodTest(unittest.TestCase):
         set_up()
 
     def test_new_url_path_for_dvds(self):
-        RT().new('dvds')
+        rt().new('dvds')
         path = call_args('path')
         self.assertEqual(path, '/api/public/v1.0/lists/dvds/new_releases.json')
 
     def test_new_url_keys_for_dvds_with_kwargs(self):
-        RT().new('dvds', page=2)
+        rt().new('dvds', page=2)
         parsed_query = call_args()
         assert '2' in parsed_query['page']
 
     def test_new_url_path_for_movies(self):
-        RT().new('movies')
+        rt().new('movies')
         path = call_args('path')
         self.assertEqual(path, '/api/public/v1.0/lists/movies/opening.json')
 
     def test_new_url_keys_for_movies_with_kwargs(self):
-        RT().new('movies', page_limit=5)
+        rt().new('movies', page_limit=5)
         parsed_query = call_args()
         assert '5' in parsed_query['page_limit']
 
@@ -215,31 +215,31 @@ class MoviesMethodTest(unittest.TestCase):
         set_up()
 
     def test_empty_movies_call_reverts_to_in_theaters(self):
-        RT().movies()
+        rt().movies()
         path = call_args('path')
         expected_path = '/api/public/v1.0/lists/movies/in_theaters.json'
         self.assertEqual(path, expected_path)
 
     def test_movies_in_theaters(self):
-        RT().movies('in_theaters')
+        rt().movies('in_theaters')
         path = call_args('path')
         expected_path = '/api/public/v1.0/lists/movies/in_theaters.json'
         self.assertEqual(path, expected_path)
 
     def test_movies_upcoming(self):
-        RT().movies('upcoming')
+        rt().movies('upcoming')
         path = call_args('path')
         expected_path = '/api/public/v1.0/lists/movies/upcoming.json'
         self.assertEqual(path, expected_path)
 
     def test_movies_opening(self):
-        RT().movies('opening')
+        rt().movies('opening')
         path = call_args('path')
         expected_path = '/api/public/v1.0/lists/movies/opening.json'
         self.assertEqual(path, expected_path)
 
     def test_movies_box_office(self):
-        RT().movies('box_office')
+        rt().movies('box_office')
         path = call_args('path')
         expected_path = '/api/public/v1.0/lists/movies/box_office.json'
         self.assertEqual(path, expected_path)
@@ -251,13 +251,13 @@ class DvdsMethodTest(unittest.TestCase):
         set_up()
 
     def test_empty_dvds_call_reverts_to_new_releases(self):
-        RT().dvds()
+        rt().dvds()
         path = call_args('path')
         expected_path = '/api/public/v1.0/lists/dvds/new_releases.json'
         self.assertEqual(path, expected_path)
 
     def test_dvds_new_releases(self):
-        RT().dvds('new_releases')
+        rt().dvds('new_releases')
         path = call_args('path')
         expected_path = '/api/public/v1.0/lists/dvds/new_releases.json'
         self.assertEqual(path, expected_path)
@@ -269,10 +269,10 @@ class FeelingLuckyMethodTest(unittest.TestCase):
         set_up()
 
     def test_empty_feeling_lucky_method_fails(self):
-        self.assertRaises(TypeError, RT().feeling_lucky)
+        self.assertRaises(TypeError, rt().feeling_lucky)
 
     def test_first_json_loads_movies_result_is_returned(self):
-        data = RT().feeling_lucky('some movie')
+        data = rt().feeling_lucky('some movie')
         self.assertEqual(data, 'first_result')
 
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
 
-from rottentomatoes import RT
+from rottentomatoes import rt
 
-__all__ = [RT]
+__all__ = [rt]

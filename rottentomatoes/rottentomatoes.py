@@ -23,16 +23,16 @@ except ImportError:  # pragma: no cover
 from rottentomatoes_api_key import API_KEY
 
 
-class RT(object):
+class rt(object):
     """
     An easy-to-use Python wrapper for the Rotten Tomatoes API.
 
-    >>> RT('my-api-key').search('the lion king')
+    >>> rt('my-api-key').search('the lion king')
 
     Or, if your API key is stored in the `rottentomatoes_api_key.py` file,
-    the RT class can be initialized like so:
+    the rt class can be initialized like so:
 
-    >>> RT().search('the lion king')
+    >>> rt().search('the lion king')
     """
 
     def __init__(self, api_key='', version=1.0):
@@ -53,11 +53,11 @@ class RT(object):
         Rotten Tomatoes movie search. Returns a list of dictionaries.
         Possible kwargs include: `page` and `page_limit`.
 
-        >>> RT().search('the lion king')
+        >>> rt().search('the lion king')
 
         Or, for the total count of search results:
 
-        >>> RT().search('disney', 'total')
+        >>> rt().search('disney', 'total')
         """
         search_url = [self.movie_url, '?']
         kwargs.update({'apikey': self.api_key, 'q': query})
@@ -69,12 +69,12 @@ class RT(object):
         """
         Displays the lists available in the Rotten Tomatoes API.
 
-        >>> RT().lists()
+        >>> rt().lists()
         {u'links': {u'movies': u'http://link-to-movies'
                     u'dvds': u'http://link-to-dvds'}
-        >>> RT().lists('dvds')
+        >>> rt().lists('dvds')
         {u'links': {u'new_releases': u'http://link-to-new-releases'}
-        >>> RT().lists('dvds', 'new_releases')
+        >>> rt().lists('dvds', 'new_releases')
         """
         lists_url = [self.lists_url]
         if directory:
@@ -93,9 +93,9 @@ class RT(object):
         Arguments for `specific_info` include `cast` and `reviews`.
 
         >>> fight_club = u'13153'
-        >>> RT().info(fight_club)
+        >>> rt().info(fight_club)
         >>> # For cast info
-        ... RT().info(fight_club, 'cast')
+        ... rt().info(fight_club, 'cast')
         """
         if isinstance(id_num, int):
             id_num = str(id_num)
@@ -113,7 +113,7 @@ class RT(object):
         Short method to return just opened theatrical movies or newly
         released dvds. Returns a list of dictionaries.
 
-        >>> RT().new('dvds', page_limit=5)
+        >>> rt().new('dvds', page_limit=5)
         """
         if kind == 'movies':
             return self.lists('movies', 'opening', **kwargs)['movies']
@@ -126,7 +126,7 @@ class RT(object):
         Possible sub aruments include: `box_office`, `in_theaters`,
         `opening`, and `upcoming`.
 
-        >>> RT().movies('in_theaters', page_limit=5)
+        >>> rt().movies('in_theaters', page_limit=5)
         """
         return self.lists('movies', sub, **kwargs)['movies']
 
@@ -135,7 +135,7 @@ class RT(object):
         Short method for returning specific movie lists.
         Currently, only one sub argument is possible: `new_releases`.
 
-        >>> RT().dvds(page_limit=5)
+        >>> rt().dvds(page_limit=5)
         """
         return self.lists('dvds', sub, **kwargs)['movies']
 
@@ -144,6 +144,6 @@ class RT(object):
         Similar to Google's **I'm Feeling Lucky** button.
         Returns first instance of search term.
 
-        >>> RT().feeling_lucky('memento')
+        >>> rt().feeling_lucky('memento')
         """
         return self.search(search_term, page_limit=1)[0]

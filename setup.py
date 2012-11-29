@@ -10,7 +10,7 @@ import rottentomatoes
 setup(name="rottentomatoes",
       version="1.0.1",
       description="Rotten Tomatoes Python API",
-      long_description=rottentomatoes.RT.__doc__,
+      long_description=rottentomatoes.rt.__doc__,
       keywords="rottentomatoes movies rotten tomatoes",
       author="Zach Williams",
       author_email="hey@zachwill.com",
