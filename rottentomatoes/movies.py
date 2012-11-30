@@ -1,3 +1,5 @@
+from datetime import datetime
+
 class Movie(object):
     def __init__(self, raw_json, client):
         self.client = client
@@ -10,6 +12,14 @@ class Movie(object):
     @property
     def url(self):
         return self.data['links']['self']
+
+    @property
+    def theater_date(self):
+        return datetime.strptime(self.data['release_dates']['theater'], '%Y-%m-%d').date()
+
+    @property
+    def dvd_date(self):
+        return datetime.strptime(self.data['release_dates']['dvd'], '%Y-%m-%d').date()
 
     def get_info(self, key):
         '''
