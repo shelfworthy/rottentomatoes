@@ -72,4 +72,4 @@ class RottenTomatoesClient(object):
         if directory:
             base_list_url = base_list_url + '/' + directory
 
-        return self.parse_results(self.get_resource(base_list_url))
+        return self.parse_results(self.get_resource(base_list_url, params={'page': page}))
