@@ -15,7 +15,8 @@ class Movie(object):
 
     @property
     def theater_date(self):
-        return datetime.strptime(self.data['release_dates']['theater'], '%Y-%m-%d').date()
+        if 'theater' in self.data['release_dates']:
+            return datetime.strptime(self.data['release_dates']['theater'], '%Y-%m-%d').date()
 
     @property
     def dvd_date(self):
