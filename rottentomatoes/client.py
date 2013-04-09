@@ -30,7 +30,7 @@ class RottenTomatoesClient(object):
         response = requests.get(url, params=request_params, allow_redirects=True)
         response.raise_for_status()  # raise an error if we get one
 
-        return response.json
+        return response.json()
 
     def parse_results(self, results):
         ''' takes results from search or lists and puts it in a nice format.
