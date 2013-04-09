@@ -18,7 +18,7 @@ setup(name="rottentomatoes",
     license="Unlicense (a.k.a. Public Domain)",
     packages=find_packages(),
     install_requires=[
-      'requests==0.14.2',
+      'requests==1.2.0',
     ],
     classifiers=['Development Status :: 4 - Beta',
                  'Intended Audience :: Developers',
