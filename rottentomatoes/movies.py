@@ -19,8 +19,9 @@ class Movie(object):
 
     @property
     def imdb_id(self):
-        if 'imdb' in self.data['alternate_ids']:
-            return self.data['alternate_ids']['imdb']
+        if 'alternate_ids' in self.data:
+            if 'imdb' in self.data['alternate_ids']:
+                return self.data['alternate_ids']['imdb']
         return None
 
     @property
