@@ -21,6 +21,7 @@ class Movie(object):
     def imdb_id(self):
         if 'imdb' in self.data['alternate_ids']:
             return self.data['alternate_ids']['imdb']
+        return None
 
     @property
     def critics_score(self):
@@ -30,6 +31,7 @@ class Movie(object):
     def theater_date(self):
         if 'theater' in self.data['release_dates']:
             return datetime.strptime(self.data['release_dates']['theater'], '%Y-%m-%d').date()
+        return None
 
     @property
     def dvd_date(self):
