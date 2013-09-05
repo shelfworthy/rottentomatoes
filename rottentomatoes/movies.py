@@ -15,7 +15,9 @@ class Movie(object):
 
     @property
     def year(self):
-        return int(self.data['year'])
+        if 'year' in self.data:
+            return int(self.data['year'])
+        return None
 
     @property
     def imdb_id(self):
