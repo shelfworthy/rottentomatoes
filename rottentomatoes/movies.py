@@ -18,6 +18,11 @@ class Movie(object):
         return int(self.data['year'])
 
     @property
+    def imdb_id(self):
+        if 'imdb' in self.data['alternate_ids']:
+            return self.data['alternate_ids']['imdb']
+
+    @property
     def critics_score(self):
         return int(self.data['ratings']['critics_score'])
 
