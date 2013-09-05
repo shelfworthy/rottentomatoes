@@ -14,6 +14,14 @@ class Movie(object):
         return self.data['links']['self']
 
     @property
+    def year(self):
+        return int(self.data['year'])
+
+    @property
+    def critics_score(self):
+        return int(self.data['ratings']['critics_score'])
+
+    @property
     def theater_date(self):
         if 'theater' in self.data['release_dates']:
             return datetime.strptime(self.data['release_dates']['theater'], '%Y-%m-%d').date()
