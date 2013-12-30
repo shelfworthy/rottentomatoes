@@ -66,6 +66,17 @@ class RottenTomatoesClient(object):
 
         return self.parse_results(raw)
 
+    def search_by_imdb(self, imdb_id):
+        result = self.get_resource('movie_alias', params={
+            'type': 'imdb',
+            'id': imdb_id,
+        })
+
+        if 'error' in result:
+            return None
+        else:
+            return Movie(result, self)
+
     def lists(self, directory=None, page=1):
         base_list_url = 'lists'
 
