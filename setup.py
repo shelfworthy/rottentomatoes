@@ -8,7 +8,7 @@ read = lambda filepath: codecs.open(filepath, 'r', 'utf-8').read()
 
 
 setup(name="rottentomatoes",
-    version="1.0.1",
+    version="1.0.2",
     description="Rotten Tomatoes Python API",
     long_description=read(os.path.join(os.path.dirname(__file__), 'README.md')),
     keywords="rottentomatoes movies rotten tomatoes",

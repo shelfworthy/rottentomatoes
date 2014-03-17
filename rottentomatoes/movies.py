@@ -14,6 +14,10 @@ class Movie(object):
         return self.data['links']['self']
 
     @property
+    def web_link(self):
+        return self.data['links']['alternate']
+
+    @property
     def year(self):
         try:
             return int(self.data['year'])
